@@ -1,0 +1,27 @@
+# --- PII: the real volunteer roster must NEVER be committed ---
+*.xlsx
+*.xls
+*.csv
+*.pdf
+out/
+
+# secrets
+.env
+.env.*
+!.env.example
+
+# build
+node_modules/
+dist/
+dev-dist/
+*.local
+
+# editor/os
+.DS_Store
+*.code-workspace
+*.tsbuildinfo
+
+# test artifacts — never commit (playwright snapshots can contain roster PII and keys)
+.playwright-mcp/
+/pass-modal.png
+/sample.png
