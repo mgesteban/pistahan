@@ -411,7 +411,9 @@ body {
 }
 
 .pass-qr-wrap { padding: 8px 8px 0; }
-.pass-qr { width: min(78vw, 320px); height: auto; display: block; }
+/* the dvh term keeps the QR fully on-screen in short/landscape viewports —
+   a partially clipped QR looks fine to the eye but will not scan */
+.pass-qr { width: min(78vw, 320px, 52dvh); height: auto; display: block; }
 
 .pass-token {
   font-family: ui-monospace, monospace;
@@ -666,3 +668,7 @@ body {
   flex-direction: column;
   gap: 10px;
 }
+
+/* without this, flex squashes the pass card to fit (clipping the QR via the
+   card's overflow:hidden) instead of letting the modal scroll */
+.modal-body > * { flex-shrink: 0; }

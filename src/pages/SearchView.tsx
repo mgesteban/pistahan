@@ -61,7 +61,7 @@ export default function SearchView({ roster, checkins, onCheckin, onShowPass }: 
                   className={`btn btn-small ${at ? '' : 'btn-primary'}`}
                   onClick={() => void onCheckin(v.token)}
                 >
-                  {at ? 'Again' : 'Check in'}
+                  Check in
                 </button>
               </div>
             </li>
