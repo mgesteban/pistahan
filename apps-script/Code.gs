@@ -9,6 +9,9 @@
  *                 never shipped in any bundle. Guards roster/checkin/walkup/stats.
  *   LOOKUP_KEY  — baked into the public /pass page; guards ONLY the
  *                 one-record-by-email lookup.
+ *   ADMIN_KEY   — guards roster import (bulk overwrite of the Roster tab);
+ *                 known only to the coordinator's machine (.env), never
+ *                 shipped in any bundle or typed on event day.
  *
  * CORS: clients POST with Content-Type text/plain (a "simple request", no
  * preflight — Apps Script cannot answer preflights). Body is a JSON string.
@@ -32,6 +35,14 @@ var WALKUP_COLS = [
 
 var TOKEN_ALPHABET = '23456789ABCDEFGHJKMNPQRSTUVWXYZ'; // no 0/O/1/I/L
 
+// Event timezone — all sheet timestamps are written in SF local time,
+// not UTC (toISOString), which reads 7h ahead and rolls the date at 5pm.
+var TZ = 'America/Los_Angeles';
+
+function localStamp_(date) {
+  return Utilities.formatDate(date, TZ, 'yyyy-MM-dd HH:mm:ss');
+}
+
 // ---------------------------------------------------------------- entrypoints
 
 function doGet(e) {
@@ -54,6 +65,10 @@ function doGet(e) {
 function doPost(e) {
   try {
     var body = JSON.parse(e.postData.contents);
+    if (body.action === 'import_roster') {
+      requireKey_(body.key, 'ADMIN_KEY');
+      return json_(importRoster_(body.rows || []));
+    }
     requireKey_(body.key, 'SCANNER_KEY');
     if (body.action === 'checkin') return json_(checkin_(body.scans || []));
     if (body.action === 'walkup') return json_(walkup_(body.walkups || []));
@@ -77,7 +92,7 @@ function roster_() {
     };
   }).filter(function (v) { return v.token; });
   return {
-    version: new Date().toISOString(),
+    version: localStamp_(new Date()),
     count: volunteers.length,
     volunteers: volunteers
   };
@@ -123,7 +138,7 @@ function checkin_(scans) {
   try {
     var sheet = tab_('CheckIns');
     var existing = existingScanIds_(sheet);
-    var now = new Date().toISOString();
+    var now = localStamp_(new Date());
     var accepted = [], duplicates = [], newRows = [];
 
     scans.forEach(function (s) {
@@ -135,7 +150,9 @@ function checkin_(scans) {
       existing[s.scan_id] = true;
       accepted.push(s.scan_id);
       newRows.push([
-        s.scan_id, s.timestamp_client || '', now, s.token || '',
+        s.scan_id,
+        s.timestamp_client ? localStamp_(new Date(s.timestamp_client)) : '',
+        now, s.token || '',
         s.station || '', s.method || '', s.operator || ''
       ]);
     });
@@ -157,7 +174,7 @@ function walkup_(walkups) {
   lock.waitLock(30000);
   try {
     var sheet = tab_('Walkups');
-    var now = new Date().toISOString();
+    var now = localStamp_(new Date());
     var rows = walkups.map(function (w) {
       return [
         w.first_name || '', w.last_name || '', w.phone || '',
@@ -167,6 +184,43 @@ function walkup_(walkups) {
     sheet.getRange(sheet.getLastRow() + 1, 1, rows.length, WALKUP_COLS.length)
       .setValues(rows);
     return { accepted: rows.length };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+/**
+ * Bulk-replace the Roster tab with a freshly converted roster (see
+ * scripts/convert_assignments.py + scripts/push_roster.py). pass_sent_*
+ * stamps already in the Sheet are kept for matching tokens so nobody
+ * gets a duplicate pass email after a re-import.
+ */
+function importRoster_(rows) {
+  if (!rows.length) return { error: 'no rows' };
+  var lock = LockService.getScriptLock();
+  lock.waitLock(30000);
+  try {
+    var sheet = tab_('Roster');
+    var sent = {};
+    readTab_('Roster', ROSTER_COLS).forEach(function (r) {
+      if (r.token && (r.pass_sent_email || r.pass_sent_sms)) {
+        sent[r.token] = { email: r.pass_sent_email, sms: r.pass_sent_sms };
+      }
+    });
+    var values = rows.map(function (r) {
+      var keep = sent[r.token] || {};
+      return ROSTER_COLS.map(function (c) {
+        if (c === 'pass_sent_email') return r[c] || keep.email || '';
+        if (c === 'pass_sent_sms') return r[c] || keep.sms || '';
+        return r[c] == null ? '' : r[c];
+      });
+    });
+    var previous = sheet.getLastRow() - 1;
+    if (previous > 0) {
+      sheet.getRange(2, 1, previous, ROSTER_COLS.length).clearContent();
+    }
+    sheet.getRange(2, 1, values.length, ROSTER_COLS.length).setValues(values);
+    return { imported: values.length, previous: previous };
   } finally {
     lock.releaseLock();
   }
@@ -234,7 +288,7 @@ function sendPassEmails() {
         'even with bad cell service on event day.</p>' +
         '<p>Questions? Reply to this email or find the help desk on site.</p>'
     });
-    sheet.getRange(i + 2, sentCol).setValue(new Date().toISOString());
+    sheet.getRange(i + 2, sentCol).setValue(localStamp_(new Date()));
     sent++;
   }
   Logger.log('Sent ' + sent + ' pass emails');
