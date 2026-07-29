@@ -90,6 +90,8 @@ body {
   font-size: 1.1rem;
   cursor: pointer;
   padding: 2px 6px;
+  min-width: 44px;
+  min-height: 44px;
 }
 
 .progress {
@@ -163,7 +165,9 @@ body {
 .btn:disabled { opacity: 0.4; cursor: default; }
 .btn-primary { background: var(--accent); color: #17253b; }
 .btn-big { padding: 16px; font-size: 1.1rem; width: 100%; }
-.btn-small { padding: 8px 12px; font-size: 0.9rem; }
+/* min-height keeps these comfortably tappable — coordinators hit them
+   hundreds of times on event day (44px is the mobile guideline) */
+.btn-small { padding: 8px 12px; font-size: 0.9rem; min-height: 44px; }
 
 .btn-link {
   background: none;
@@ -171,7 +175,7 @@ body {
   color: var(--accent);
   cursor: pointer;
   font-size: 0.95rem;
-  padding: 8px 0;
+  padding: 12px 0;
   text-decoration: underline;
 }
 
@@ -664,6 +668,15 @@ body {
 }
 
 .map-link:hover { border-color: var(--accent); }
+
+.credit {
+  margin-top: 14px;
+  color: var(--muted);
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.credit a { color: var(--muted); }
 
 .help-footer {
   margin-top: 36px;

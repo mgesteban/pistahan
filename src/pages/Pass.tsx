@@ -70,6 +70,12 @@ export default function Pass() {
         <a className="btn-link" href="/help#maps">
           Event maps (parade route, pavilion, assembly) →
         </a>
+        <footer className="credit">
+          Developed with ❤️ by{' '}
+          <a href="https://www.mgesteban.com" target="_blank" rel="noreferrer">
+            www.mgesteban.com
+          </a>
+        </footer>
       </main>
     )
   }
@@ -140,6 +146,12 @@ export default function Pass() {
       <a className="btn-link" href="/help">
         How check-in works →
       </a>
+      <footer className="credit">
+        Developed with ❤️ by{' '}
+        <a href="https://www.mgesteban.com" target="_blank" rel="noreferrer">
+          www.mgesteban.com
+        </a>
+      </footer>
     </main>
   )
 }

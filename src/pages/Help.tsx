@@ -265,6 +265,12 @@ export default function Help() {
       <footer className="help-footer">
         Pistahan 33 · Filipino American Arts Exposition · Questions? Find
         Grace or the help desk. Salamat for volunteering! 🇵🇭
+        <div className="credit">
+          Developed with ❤️ by{' '}
+          <a href="https://www.mgesteban.com" target="_blank" rel="noreferrer">
+            www.mgesteban.com
+          </a>
+        </div>
       </footer>
     </main>
   )
