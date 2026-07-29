@@ -33,6 +33,8 @@ CONTACT_SOURCES = [
     'backup-2026-07-29/roster_clean.csv',                # full pre-replacement roster
     'backup-2026-07-29/roster_partial_replacement.csv',  # newer partial — wins conflicts
 ]
+# name,size export matching the workbook's names; authoritative for shirt_size
+SHIRT_SOURCE = 'tshirt-sizes.csv'
 TOKEN_ALPHABET = '23456789ABCDEFGHJKMNPQRSTUVWXYZ'  # no 0/O/1/I/L
 DAY_MAP = {
     'SAT': 'SAT',
@@ -83,6 +85,19 @@ def main(path):
         with p.open() as f:
             for r in csv.DictReader(f):
                 contacts[norm(f"{r['first_name']} {r['last_name']}")] = r
+
+    shirts = {}
+    if Path(SHIRT_SOURCE).exists():
+        with open(SHIRT_SOURCE) as f:
+            for row in csv.reader(f):
+                if not row or not row[0].strip():
+                    continue
+                name, _ = clean_name(row[0])
+                size = row[1].strip().upper() if len(row) > 1 else ''
+                if size and size not in ('TBD', 'TSHIRT SIZE'):
+                    shirts[norm(name)] = size
+    else:
+        print(f'WARNING: shirt-size source missing, skipping: {SHIRT_SOURCE}')
 
     wb = openpyxl.load_workbook(path)
     ws = wb[SHEET]
@@ -150,7 +165,7 @@ def main(path):
             'last_name': last,
             'email': (contact or {}).get('email', ''),
             'phone': (contact or {}).get('phone', ''),
-            'shirt_size': (contact or {}).get('shirt_size', ''),
+            'shirt_size': shirts.get(key) or (contact or {}).get('shirt_size', ''),
             'team': team,
             'post': post,
             'days': days,
