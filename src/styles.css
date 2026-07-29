@@ -638,6 +638,25 @@ body {
 
 .help tr:last-child td { border-bottom: none; }
 
+.maps-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 10px;
+}
+
+.map-link {
+  display: block;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--text);
+  text-decoration: none;
+  font-weight: 700;
+  border: 1px solid var(--surface-2);
+}
+
+.map-link:hover { border-color: var(--accent); }
+
 .help-footer {
   margin-top: 36px;
   padding-top: 16px;

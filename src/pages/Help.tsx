@@ -1,4 +1,13 @@
-// Static how-to page: /help — volunteer guide first, coordinator guide below.
+// Static how-to page: /help — volunteer guide first, maps, coordinator guide below.
+const MAPS = [
+  { file: '/parade-route.png', title: 'Parade route' },
+  { file: '/parade-assembly.png', title: 'Parade assembly' },
+  { file: '/disembarkment.png', title: 'Parade disembarkment' },
+  { file: '/pavilion.png', title: 'Festival site map (Yerba Buena Gardens)' },
+  { file: '/check-in-pavilion.png', title: 'Volunteer check-in & Hospitality Pavilion' },
+  { file: '/evacuation.png', title: 'Evacuation routes' },
+]
+
 export default function Help() {
   return (
     <main className="shell help">
@@ -11,6 +20,7 @@ export default function Help() {
       </p>
       <nav className="help-nav">
         <a href="#volunteers">For volunteers</a>
+        <a href="#maps">Maps</a>
         <a href="#coordinators">For coordinators</a>
       </nav>
 
@@ -75,6 +85,22 @@ export default function Help() {
             from the lanes — and they’ll sort it out.
           </li>
         </ul>
+      </section>
+
+      <section className="help-chapter" id="maps">
+        <span className="chapter-tag tag-volunteer">Maps</span>
+        <h1>Know where you’re going</h1>
+        <p className="help-sub">
+          Tap a map to open it full-size — then 📸 screenshot the ones for
+          your assignment, same trick as the pass.
+        </p>
+        <div className="maps-grid">
+          {MAPS.map((m) => (
+            <a key={m.file} className="map-link" href={m.file} target="_blank" rel="noreferrer">
+              🗺️ {m.title}
+            </a>
+          ))}
+        </div>
       </section>
 
       <section className="help-chapter" id="coordinators">

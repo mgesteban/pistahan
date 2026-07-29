@@ -64,6 +64,12 @@ export default function Pass() {
         >
           Not you? Look up again
         </button>
+        <a className="btn-link" href="/help">
+          How check-in works →
+        </a>
+        <a className="btn-link" href="/help#maps">
+          Event maps (parade route, pavilion, assembly) →
+        </a>
       </main>
     )
   }
