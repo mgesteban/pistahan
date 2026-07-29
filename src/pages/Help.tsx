@@ -14,6 +14,11 @@ export default function Help() {
       <header className="statusbar">
         <span className="brand">Pistahan 33 · How It Works</span>
       </header>
+      <img
+        className="help-hero"
+        src="/pistahan.png"
+        alt="Pistahan Parade + Festival marchers carrying the banner and Philippine flags"
+      />
       <p className="help-lede">
         33rd Annual Pistahan Parade &amp; Festival · Aug 8–9, 2026 · San
         Francisco
