@@ -39,9 +39,10 @@ export default function Help() {
             On your phone, open <a href="/pass">pistahan.vercel.app/pass</a>.
           </li>
           <li>
-            Enter the <b>email you signed up with</b>. No email on file? Tap
-            <i> “No email? Use last name + phone instead”</i> and use your last
-            name plus the <b>last 4 digits of your phone number</b>.
+            Enter your <b>last name</b> and the <b>last 4 digits of your phone
+            number</b>. Prefer email? Tap
+            <i> “Prefer email? Look up by email instead”</i> and enter the
+            email you signed up with.
           </li>
           <li>
             Your pass appears: QR code, name, shirt size, team, post, and
@@ -125,7 +126,7 @@ export default function Help() {
             connection). Chrome on Android, Safari on iPhone.
           </li>
           <li>
-            Pick your <b>station</b> (S1 / S2 / S3 / Help desk) and enter your
+            Pick your <b>station</b> (Parade / Festival / Pistahan / Help desk) and enter your
             name.
           </li>
           <li>

@@ -1,12 +1,12 @@
 # Pistahan 33 — Station Coordinator Guide
 
-*For the 3 scanning-lane leads + help desk. The app: **pistahan.vercel.app***
+*For the Parade, Festival & Pistahan scanning leads + help desk. The app: **pistahan.vercel.app***
 
 ## Set up your phone (do this the night before)
 
 1. Open the **setup link** Grace sends you (it pre-fills the backend
    connection). Use Chrome (Android) or Safari (iPhone).
-2. Pick your **station** (S1 / S2 / S3, or Help desk), enter **your name**.
+2. Pick your **station** (Parade / Festival / Pistahan, or Help desk), enter **your name**.
 3. Tap **Download roster** — wait for "✓ … volunteers loaded".
 4. Tap **Start**.
 5. **Add the app to your home screen** (Share → *Add to Home Screen*). This

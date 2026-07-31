@@ -4,7 +4,7 @@ import { saveRoster } from '../lib/db'
 import { saveSettings } from '../lib/settings'
 import type { Settings, Station, Volunteer } from '../lib/types'
 
-const STATIONS: Station[] = ['S1', 'S2', 'S3', 'HELP']
+const STATIONS: Station[] = ['Parade', 'Festival', 'Pistahan', 'HELP']
 
 interface Props {
   onDone: (s: Settings) => void

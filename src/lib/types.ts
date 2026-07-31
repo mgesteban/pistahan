@@ -13,7 +13,7 @@ export interface Volunteer {
   assignments: string
 }
 
-export type Station = 'S1' | 'S2' | 'S3' | 'HELP'
+export type Station = 'Parade' | 'Festival' | 'Pistahan' | 'HELP'
 
 export interface Scan {
   scan_id: string

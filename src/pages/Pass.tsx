@@ -18,7 +18,7 @@ function loadCached(): Volunteer | null {
 
 export default function Pass() {
   const [volunteer, setVolunteer] = useState<Volunteer | null>(() => loadCached())
-  const [mode, setMode] = useState<'email' | 'phone'>('email')
+  const [mode, setMode] = useState<'email' | 'phone'>('phone')
   const [email, setEmail] = useState('')
   const [lastName, setLastName] = useState('')
   const [phone4, setPhone4] = useState('')
@@ -96,7 +96,11 @@ export default function Pass() {
           <p>Pass lookup isn’t open yet — check back soon.</p>
         ) : (
           <>
-            <p>Enter the email you signed up with.</p>
+            <p>
+              {mode === 'phone'
+                ? 'Enter your last name and the last 4 digits of your phone number.'
+                : 'Enter the email you signed up with.'}
+            </p>
             {mode === 'email' ? (
               <input
                 className="input"
@@ -136,8 +140,8 @@ export default function Pass() {
               onClick={() => setMode(mode === 'email' ? 'phone' : 'email')}
             >
               {mode === 'email'
-                ? 'No email? Use last name + phone instead'
-                : 'Use email instead'}
+                ? 'Use last name + phone instead'
+                : 'Prefer email? Look up by email instead'}
             </button>
             {message && <div className="error">{message}</div>}
           </>
