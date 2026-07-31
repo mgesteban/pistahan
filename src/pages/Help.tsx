@@ -39,10 +39,9 @@ export default function Help() {
             On your phone, open <a href="/pass">pistahan.vercel.app/pass</a>.
           </li>
           <li>
-            Enter your <b>last name</b> and the <b>last 4 digits of your phone
-            number</b>. Prefer email? Tap
-            <i> “Prefer email? Look up by email instead”</i> and enter the
-            email you signed up with.
+            Enter your <b>last name</b>, <b>first name</b>, <b>email</b>, or
+            the <b>last 4 digits of your phone number</b>. If more than one
+            volunteer matches, try your email or phone digits instead.
           </li>
           <li>
             Your pass appears: QR code, name, shirt size, team, post, and

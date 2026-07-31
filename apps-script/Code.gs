@@ -100,22 +100,51 @@ function roster_() {
 
 function lookup_(p) {
   var rows = readTab_('Roster', ROSTER_COLS);
-  var email = String(p.email || '').trim().toLowerCase();
-  var last = String(p.last_name || '').trim().toLowerCase();
-  var phone4 = String(p.phone4 || '').replace(/\D/g, '');
-  var match = null;
+  var q = String(p.q || '').trim();
+  var matches = [];
 
-  if (email) {
-    match = rows.filter(function (r) {
-      return String(r.email).trim().toLowerCase() === email;
-    })[0];
-  } else if (last && phone4.length === 4) {
-    match = rows.filter(function (r) {
-      return String(r.last_name).trim().toLowerCase() === last &&
-        String(r.phone).replace(/\D/g, '').slice(-4) === phone4;
-    })[0];
+  if (q) {
+    // One box, four ways in: email, phone digits, last name, or first name.
+    var ql = q.toLowerCase();
+    var digits = q.replace(/\D/g, '');
+    var punctOnly = q.replace(/[\d\s().+-]/g, '') === '';
+    if (q.indexOf('@') !== -1) {
+      matches = rows.filter(function (r) {
+        return String(r.email).trim().toLowerCase() === ql;
+      });
+    } else if (punctOnly && digits.length >= 4) {
+      matches = rows.filter(function (r) {
+        var ph = String(r.phone).replace(/\D/g, '');
+        return ph && ph.slice(-digits.length) === digits;
+      });
+    } else {
+      matches = rows.filter(function (r) {
+        return String(r.last_name).trim().toLowerCase() === ql ||
+          String(r.first_name).trim().toLowerCase() === ql;
+      });
+    }
+  } else {
+    // Legacy params from clients cached before the single-box lookup.
+    var email = String(p.email || '').trim().toLowerCase();
+    var last = String(p.last_name || '').trim().toLowerCase();
+    var phone4 = String(p.phone4 || '').replace(/\D/g, '');
+    if (email) {
+      matches = rows.filter(function (r) {
+        return String(r.email).trim().toLowerCase() === email;
+      });
+    } else if (last && phone4.length === 4) {
+      matches = rows.filter(function (r) {
+        return String(r.last_name).trim().toLowerCase() === last &&
+          String(r.phone).replace(/\D/g, '').slice(-4) === phone4;
+      });
+    }
   }
 
+  if (matches.length > 1) {
+    // Never list people — make the caller narrow it down instead.
+    return { found: false, message: 'More than one volunteer matches — try your email or the last 4 digits of your phone.' };
+  }
+  var match = matches[0];
   if (!match || !match.token) {
     return { found: false, message: 'Not found — see the help desk on event day.' };
   }

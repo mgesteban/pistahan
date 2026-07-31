@@ -18,10 +18,7 @@ function loadCached(): Volunteer | null {
 
 export default function Pass() {
   const [volunteer, setVolunteer] = useState<Volunteer | null>(() => loadCached())
-  const [mode, setMode] = useState<'email' | 'phone'>('phone')
-  const [email, setEmail] = useState('')
-  const [lastName, setLastName] = useState('')
-  const [phone4, setPhone4] = useState('')
+  const [query, setQuery] = useState('')
   const [busy, setBusy] = useState(false)
   const [message, setMessage] = useState('')
 
@@ -29,11 +26,7 @@ export default function Pass() {
     setBusy(true)
     setMessage('')
     try {
-      const params =
-        mode === 'email'
-          ? { email: email.trim() }
-          : { last_name: lastName.trim(), phone4: phone4.trim() }
-      const res = await apiLookup(API_URL, LOOKUP_KEY, params)
+      const res = await apiLookup(API_URL, LOOKUP_KEY, { q: query.trim() })
       if (res.found && res.volunteer) {
         localStorage.setItem(CACHE_KEY, JSON.stringify(res.volunteer))
         setVolunteer(res.volunteer)
@@ -80,10 +73,7 @@ export default function Pass() {
     )
   }
 
-  const canSubmit =
-    mode === 'email'
-      ? email.trim().includes('@')
-      : lastName.trim().length > 1 && phone4.trim().length === 4
+  const canSubmit = query.trim().length >= 2
 
   return (
     <main className="shell pass-shell">
@@ -97,51 +87,22 @@ export default function Pass() {
         ) : (
           <>
             <p>
-              {mode === 'phone'
-                ? 'Enter your last name and the last 4 digits of your phone number.'
-                : 'Enter the email you signed up with.'}
+              Enter your last name, first name, email, or the last 4 digits
+              of your phone number.
             </p>
-            {mode === 'email' ? (
-              <input
-                className="input"
-                type="email"
-                placeholder="you@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && canSubmit && void lookup()}
-              />
-            ) : (
-              <>
-                <input
-                  className="input"
-                  placeholder="Last name"
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
-                />
-                <input
-                  className="input"
-                  placeholder="Last 4 digits of your phone"
-                  inputMode="numeric"
-                  maxLength={4}
-                  value={phone4}
-                  onChange={(e) => setPhone4(e.target.value.replace(/\D/g, ''))}
-                />
-              </>
-            )}
+            <input
+              className="input"
+              placeholder="Name, email, or phone last 4"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && canSubmit && void lookup()}
+            />
             <button
               className="btn btn-primary btn-big"
               disabled={!canSubmit || busy}
               onClick={() => void lookup()}
             >
               {busy ? 'Looking up…' : 'Show my pass'}
-            </button>
-            <button
-              className="btn-link"
-              onClick={() => setMode(mode === 'email' ? 'phone' : 'email')}
-            >
-              {mode === 'email'
-                ? 'Use last name + phone instead'
-                : 'Prefer email? Look up by email instead'}
             </button>
             {message && <div className="error">{message}</div>}
           </>

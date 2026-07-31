@@ -54,7 +54,7 @@ export function apiWalkup(apiUrl: string, key: string, walkups: Walkup[]) {
 export async function apiLookup(
   apiUrl: string,
   key: string,
-  params: { email?: string; last_name?: string; phone4?: string }
+  params: { q?: string; email?: string; last_name?: string; phone4?: string }
 ): Promise<LookupResult> {
   const q = new URLSearchParams({ key, action: 'lookup', ...params })
   const res = await fetch(`${apiUrl}?${q.toString()}`)
