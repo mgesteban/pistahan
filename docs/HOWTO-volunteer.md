@@ -5,9 +5,9 @@
 ## Before event day (do this today — it takes 1 minute)
 
 1. On your phone, open: **pistahan.vercel.app/pass**
-2. Enter your **last name**, **first name**, **email**, or the **last 4
-   digits of your phone number**. If more than one volunteer matches, try
-   your email or phone digits instead.
+2. Enter your **name** (first, last, or full), your **email**, or the
+   **last 4 digits of your phone number**. If more than one volunteer
+   matches, try your email or phone digits instead.
 3. Your pass appears: a QR code, your name, shirt size, team, post, and shift.
 4. **📸 Screenshot it.** This is the important part — cell service near the
    parade route is unreliable, and a screenshot always works.

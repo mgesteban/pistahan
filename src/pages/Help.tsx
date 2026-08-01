@@ -39,8 +39,8 @@ export default function Help() {
             On your phone, open <a href="/pass">pistahan.vercel.app/pass</a>.
           </li>
           <li>
-            Enter your <b>last name</b>, <b>first name</b>, <b>email</b>, or
-            the <b>last 4 digits of your phone number</b>. If more than one
+            Enter your <b>name</b> (first, last, or full), your <b>email</b>,
+            or the <b>last 4 digits of your phone number</b>. If more than one
             volunteer matches, try your email or phone digits instead.
           </li>
           <li>

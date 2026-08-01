@@ -87,8 +87,8 @@ export default function Pass() {
         ) : (
           <>
             <p>
-              Enter your last name, first name, email, or the last 4 digits
-              of your phone number.
+              Enter your name — first, last, or full — your email, or the
+              last 4 digits of your phone number.
             </p>
             <input
               className="input"

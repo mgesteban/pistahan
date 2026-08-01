@@ -118,9 +118,14 @@ function lookup_(p) {
         return ph && ph.slice(-digits.length) === digits;
       });
     } else {
+      // Accept first, last, or full name ("Grace Esteban", "Esteban, Grace").
+      var norm = ql.replace(/,/g, ' ').replace(/\s+/g, ' ').trim();
       matches = rows.filter(function (r) {
-        return String(r.last_name).trim().toLowerCase() === ql ||
-          String(r.first_name).trim().toLowerCase() === ql;
+        var first = String(r.first_name).trim().toLowerCase();
+        var last = String(r.last_name).trim().toLowerCase();
+        var full = (first + ' ' + last).replace(/\s+/g, ' ').trim();
+        var rev = (last + ' ' + first).replace(/\s+/g, ' ').trim();
+        return last === norm || first === norm || full === norm || rev === norm;
       });
     }
   } else {
