@@ -51,6 +51,17 @@ export default function Help() {
             <b>📸 Screenshot it.</b> Cell service near the route is unreliable
             — a screenshot always works.
           </li>
+          <li>
+            Sign the{' '}
+            <a
+              href="https://docs.google.com/forms/d/e/1FAIpQLSdsdFdlsNTljDAQsaHPbFtqoy-S9uStKbe5Z7jdK0CWgpAHPg/viewform?usp=dialog"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <b>Volunteer Code of Conduct form</b>
+            </a>{' '}
+            — takes 2 minutes, required for every volunteer.
+          </li>
         </ol>
         <div className="help-callout">
           The screenshot is the whole trick. Do it while you have good
@@ -63,8 +74,8 @@ export default function Help() {
             Arrive at your <b>call time</b> — it’s on your pass.
           </li>
           <li>
-            Join the check-in lane for your <b>last name</b> (A–F / G–P / Q–Z
-            signs).
+            Join the check-in lane for your <b>event</b> — Parade, Festival,
+            or Pistahan. It’s the first word of the Team line on your pass.
           </li>
           <li>
             Show your QR screenshot with <b>screen brightness up</b>.
@@ -114,8 +125,8 @@ export default function Help() {
         </span>
         <h1>Run your lane at 18 seconds a person</h1>
         <p className="help-sub">
-          For the three scanning lanes and the help desk. Your phone is the
-          scanner; everything works offline.
+          For the Parade, Festival, and Pistahan lanes and the help desk. Your
+          phone is the scanner; everything works offline.
         </p>
 
         <h2>Set up your phone — the night before</h2>

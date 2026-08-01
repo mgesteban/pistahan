@@ -5,12 +5,14 @@
 ## Before event day (do this today — it takes 1 minute)
 
 1. On your phone, open: **pistahan.vercel.app/pass**
-2. Enter the **email address you signed up with**.
-   No email on file? Tap *"No email? Use last name + phone instead"* and enter
-   your last name plus the **last 4 digits of your phone number**.
+2. Enter your **last name**, **first name**, **email**, or the **last 4
+   digits of your phone number**. If more than one volunteer matches, try
+   your email or phone digits instead.
 3. Your pass appears: a QR code, your name, shirt size, team, post, and shift.
 4. **📸 Screenshot it.** This is the important part — cell service near the
    parade route is unreliable, and a screenshot always works.
+5. Sign the **[Volunteer Code of Conduct form](https://docs.google.com/forms/d/e/1FAIpQLSdsdFdlsNTljDAQsaHPbFtqoy-S9uStKbe5Z7jdK0CWgpAHPg/viewform?usp=dialog)**
+   — takes 2 minutes, required for every volunteer.
 
 Can't find your pass? Don't worry — you can still check in with just your name
 on event day. But the QR is faster.
@@ -18,8 +20,8 @@ on event day. But the QR is faster.
 ## On event day
 
 1. Arrive at your **call time** (it's on your pass).
-2. Find the check-in tables and join the lane for your **last name**
-   (look for the A–F / G–P / Q–Z signs).
+2. Find the check-in tables and join the lane for your **event** — Parade,
+   Festival, or Pistahan (the first word of the Team line on your pass).
 3. Show your QR screenshot — **turn your screen brightness up**.
 4. Beep! The scanner shows your shirt size and post. Grab your shirt at the
    shirt table (after the scanners) and head to your post.
