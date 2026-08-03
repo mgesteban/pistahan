@@ -6,7 +6,8 @@
  *
  * Script Properties (Project Settings → Script Properties):
  *   SCANNER_KEY — used by the station scanner app; typed in at device setup,
- *                 never shipped in any bundle. Guards roster/checkin/walkup/stats.
+ *                 never shipped in any bundle. Guards roster/checkin/walkup/
+ *                 stats and the contingent actions (list/checkin/register).
  *   LOOKUP_KEY  — baked into the public /pass page; guards ONLY the
  *                 one-record-by-email lookup.
  *   ADMIN_KEY   — guards roster import (bulk overwrite of the Roster tab);
@@ -32,6 +33,19 @@ var WALKUP_COLS = [
   'first_name', 'last_name', 'phone', 'shirt_size', 'post',
   'added_by', 'added_at'
 ];
+// Parade contingents. code = cluster code (e.g. "A5"), the unique id.
+// Run setupContingentTabs() once from the editor to create the three tabs.
+var CONTINGENT_COLS = [
+  'code', 'number', 'name', 'contact_name', 'contact_phone', 'participants',
+  'vehicles', 'staging', 'description', 'fun_facts', 'notes'
+];
+var CONTINGENT_CHECKIN_COLS = [
+  'checkin_id', 'timestamp_client', 'timestamp_server', 'code', 'operator'
+];
+var CONTINGENT_REG_COLS = [
+  'name', 'contact_name', 'contact_phone', 'cluster', 'vehicles', 'notes',
+  'added_by', 'added_at'
+];
 
 var TOKEN_ALPHABET = '23456789ABCDEFGHJKMNPQRSTUVWXYZ'; // no 0/O/1/I/L
 
@@ -55,6 +69,7 @@ function doGet(e) {
     }
     requireKey_(p.key, 'SCANNER_KEY');
     if (p.action === 'roster') return json_(roster_());
+    if (p.action === 'contingents') return json_(contingents_());
     if (p.action === 'stats') return json_(stats_());
     return json_({ error: 'unknown action' });
   } catch (err) {
@@ -72,6 +87,8 @@ function doPost(e) {
     requireKey_(body.key, 'SCANNER_KEY');
     if (body.action === 'checkin') return json_(checkin_(body.scans || []));
     if (body.action === 'walkup') return json_(walkup_(body.walkups || []));
+    if (body.action === 'contingent_checkin') return json_(contingentCheckin_(body.checkins || []));
+    if (body.action === 'contingent_register') return json_(contingentRegister_(body.regs || []));
     return json_({ error: 'unknown action' });
   } catch (err) {
     return json_({ error: String(err) });
@@ -163,6 +180,86 @@ function lookup_(p) {
       assignments: match.assignments
     }
   };
+}
+
+/**
+ * Full contingent list for the Contingent and MC stations. Contact info IS
+ * included — unlike the public volunteer roster, this payload only ever
+ * lands on scanner-key devices held by the named coordinators and the MC.
+ */
+function contingents_() {
+  var rows = readTab_('Contingents', CONTINGENT_COLS);
+  var contingents = rows.map(function (r) {
+    var obj = {};
+    CONTINGENT_COLS.forEach(function (c) {
+      obj[c] = r[c] == null ? '' : String(r[c]);
+    });
+    return obj;
+  }).filter(function (c) { return c.code && c.name; });
+  return {
+    version: localStamp_(new Date()),
+    count: contingents.length,
+    contingents: contingents
+  };
+}
+
+/** Arrival log for contingents — same append-only/dedupe shape as checkin_. */
+function contingentCheckin_(checkins) {
+  if (!checkins.length) return { accepted: [], duplicates: [] };
+  var lock = LockService.getScriptLock();
+  lock.waitLock(30000);
+  try {
+    var sheet = tab_('ContingentCheckIns');
+    var existing = existingScanIds_(sheet);
+    var now = localStamp_(new Date());
+    var accepted = [], duplicates = [], newRows = [];
+
+    checkins.forEach(function (c) {
+      if (!c.checkin_id) return;
+      if (existing[c.checkin_id]) {
+        duplicates.push(c.checkin_id);
+        return;
+      }
+      existing[c.checkin_id] = true;
+      accepted.push(c.checkin_id);
+      newRows.push([
+        c.checkin_id,
+        c.timestamp_client ? localStamp_(new Date(c.timestamp_client)) : '',
+        now, c.code || '', c.operator || ''
+      ]);
+    });
+
+    if (newRows.length) {
+      sheet.getRange(sheet.getLastRow() + 1, 1, newRows.length, CONTINGENT_CHECKIN_COLS.length)
+        .setValues(newRows);
+    }
+    return { accepted: accepted, duplicates: duplicates };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+/** On-site late adds; the parade team assigns them a real slot afterwards. */
+function contingentRegister_(regs) {
+  if (!regs.length) return { accepted: 0 };
+  var lock = LockService.getScriptLock();
+  lock.waitLock(30000);
+  try {
+    var sheet = tab_('ContingentRegistrations');
+    var now = localStamp_(new Date());
+    var rows = regs.map(function (r) {
+      return [
+        r.name || '', r.contact_name || '', r.contact_phone || '',
+        r.cluster || '', r.vehicles || '', r.notes || '',
+        r.added_by || '', now
+      ];
+    });
+    sheet.getRange(sheet.getLastRow() + 1, 1, rows.length, CONTINGENT_REG_COLS.length)
+      .setValues(rows);
+    return { accepted: rows.length };
+  } finally {
+    lock.releaseLock();
+  }
 }
 
 function checkin_(scans) {
@@ -273,6 +370,31 @@ function stats_() {
 
 // ----------------------------------------------------- one-time admin scripts
 
+/**
+ * Run once from the editor before the parade build-out. Creates the three
+ * contingent tabs with header rows if they don't exist; never touches data.
+ * Paste/import the contingent roster into the Contingents tab afterwards.
+ */
+function setupContingentTabs() {
+  var ss = SpreadsheetApp.openById(SHEET_ID);
+  [
+    ['Contingents', CONTINGENT_COLS],
+    ['ContingentCheckIns', CONTINGENT_CHECKIN_COLS],
+    ['ContingentRegistrations', CONTINGENT_REG_COLS]
+  ].forEach(function (spec) {
+    var name = spec[0], cols = spec[1];
+    var sheet = ss.getSheetByName(name);
+    if (!sheet) {
+      sheet = ss.insertSheet(name);
+      sheet.getRange(1, 1, 1, cols.length).setValues([cols]).setFontWeight('bold');
+      sheet.setFrozenRows(1);
+      Logger.log('Created tab: ' + name);
+    } else {
+      Logger.log('Tab exists, skipped: ' + name);
+    }
+  });
+}
+
 /** Run once from the editor. Fills empty token cells; never overwrites. */
 function generateTokens() {
   var sheet = tab_('Roster');
@@ -302,7 +424,7 @@ function generateTokens() {
  */
 function sendPassEmails() {
   var DAILY_BUDGET = 95; // headroom under the 100/day consumer cap
-  var PASS_URL = 'https://pistahan.vercel.app/pass'; // update after first deploy
+  var PASS_URL = 'https://pistahan.app/pass'; // custom domain; must be live in Vercel before emailing
   var sheet = tab_('Roster');
   var rows = readTab_('Roster', ROSTER_COLS);
   var sentCol = ROSTER_COLS.indexOf('pass_sent_email') + 1;

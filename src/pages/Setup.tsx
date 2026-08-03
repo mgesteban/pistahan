@@ -1,10 +1,24 @@
 import { useRef, useState } from 'react'
-import { apiFetchRoster } from '../lib/api'
-import { saveRoster } from '../lib/db'
+import { apiFetchContingents, apiFetchRoster } from '../lib/api'
+import { saveContingents, saveRoster } from '../lib/db'
 import { saveSettings } from '../lib/settings'
-import type { Settings, Station, Volunteer } from '../lib/types'
+import type { Contingent, Settings, Station, Volunteer } from '../lib/types'
 
-const STATIONS: Station[] = ['Parade', 'Festival', 'Pistahan', 'HELP']
+const STATIONS: Station[] = ['Parade', 'Festival', 'Pistahan', 'HELP', 'Contingent', 'MC']
+
+const STATION_LABELS: Record<Station, string> = {
+  Parade: 'Parade',
+  Festival: 'Festival',
+  Pistahan: 'Pistahan',
+  HELP: 'Help desk',
+  Contingent: 'Contingent',
+  MC: 'MC',
+}
+
+// Contingent and MC stations run on the contingent list, not the volunteer roster.
+function usesContingents(s: Station | null) {
+  return s === 'Contingent' || s === 'MC'
+}
 
 interface Props {
   onDone: (s: Settings) => void
@@ -26,9 +40,34 @@ export default function Setup({ onDone }: Props) {
   const [error, setError] = useState('')
   const fileRef = useRef<HTMLInputElement>(null)
 
+  const contingentMode = usesContingents(station)
+  const noun = contingentMode ? 'contingents' : 'volunteers'
+
+  function pickStation(s: Station) {
+    // A loaded volunteer roster is useless to a contingent station (and vice
+    // versa) — force a re-download when the mode flips.
+    if (usesContingents(s) !== contingentMode) setRosterInfo(null)
+    setStation(s)
+  }
+
   async function loadFromFile(file: File) {
     setError('')
     try {
+      if (contingentMode) {
+        const parsed = JSON.parse(await file.text()) as
+          | Contingent[]
+          | { version?: string; contingents: Contingent[] }
+        const contingents = Array.isArray(parsed) ? parsed : parsed.contingents
+        const version = Array.isArray(parsed)
+          ? `file ${file.name}`
+          : (parsed.version ?? `file ${file.name}`)
+        if (!contingents?.length || !contingents[0].code) {
+          throw new Error('not a contingent file (expected contingents with codes)')
+        }
+        await saveContingents(contingents)
+        setRosterInfo({ count: contingents.length, version })
+        return
+      }
       const parsed = JSON.parse(await file.text()) as
         | Volunteer[]
         | { version?: string; volunteers: Volunteer[] }
@@ -50,9 +89,15 @@ export default function Setup({ onDone }: Props) {
     setError('')
     setBusy(true)
     try {
-      const res = await apiFetchRoster(apiUrl.trim(), scannerKey.trim())
-      await saveRoster(res.volunteers)
-      setRosterInfo({ count: res.count ?? res.volunteers.length, version: res.version })
+      if (contingentMode) {
+        const res = await apiFetchContingents(apiUrl.trim(), scannerKey.trim())
+        await saveContingents(res.contingents)
+        setRosterInfo({ count: res.count ?? res.contingents.length, version: res.version })
+      } else {
+        const res = await apiFetchRoster(apiUrl.trim(), scannerKey.trim())
+        await saveRoster(res.volunteers)
+        setRosterInfo({ count: res.count ?? res.volunteers.length, version: res.version })
+      }
     } catch (err) {
       setError(`Download failed: ${String(err)}`)
     } finally {
@@ -88,9 +133,9 @@ export default function Setup({ onDone }: Props) {
             <button
               key={s}
               className={`station-btn ${station === s ? 'selected' : ''}`}
-              onClick={() => setStation(s)}
+              onClick={() => pickStation(s)}
             >
-              {s === 'HELP' ? 'Help desk' : s}
+              {STATION_LABELS[s]}
             </button>
           ))}
         </div>
@@ -107,16 +152,16 @@ export default function Setup({ onDone }: Props) {
       </section>
 
       <section className="setup-step">
-        <h2>3 · Roster</h2>
+        <h2>3 · {contingentMode ? 'Contingent list' : 'Roster'}</h2>
         {rosterInfo ? (
           <div className="roster-loaded">
-            ✓ {rosterInfo.count} volunteers loaded
+            ✓ {rosterInfo.count} {noun} loaded
             <div className="roster-version">{rosterInfo.version}</div>
           </div>
         ) : (
           <>
             <button className="btn" onClick={() => fileRef.current?.click()}>
-              Import roster file (.json)
+              Import {contingentMode ? 'contingent' : 'roster'} file (.json)
             </button>
             <input
               ref={fileRef}
@@ -147,7 +192,7 @@ export default function Setup({ onDone }: Props) {
               disabled={!apiUrl.trim() || !scannerKey.trim() || busy}
               onClick={() => void loadFromBackend()}
             >
-              {busy ? 'Downloading…' : 'Download roster'}
+              {busy ? 'Downloading…' : `Download ${contingentMode ? 'contingents' : 'roster'}`}
             </button>
           </>
         )}

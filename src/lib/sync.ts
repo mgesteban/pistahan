@@ -1,5 +1,14 @@
-import { apiCheckin, apiWalkup } from './api'
-import { getOutbox, getWalkupQueue, removeScans, removeWalkups } from './db'
+import { apiCheckin, apiContingentCheckin, apiContingentReg, apiWalkup } from './api'
+import {
+  getContingentOutbox,
+  getContingentRegQueue,
+  getOutbox,
+  getWalkupQueue,
+  removeContingentRegs,
+  removeContingentScans,
+  removeScans,
+  removeWalkups,
+} from './db'
 import type { Settings } from './types'
 
 export interface SyncState {
@@ -29,14 +38,29 @@ export async function flushNow(settings: Settings): Promise<void> {
       await apiWalkup(settings.apiUrl, settings.scannerKey, walkups)
       await removeWalkups(walkups.map((w) => w.walkup_id))
     }
+    const ctgScans = await getContingentOutbox()
+    if (ctgScans.length) {
+      const res = await apiContingentCheckin(settings.apiUrl, settings.scannerKey, ctgScans)
+      await removeContingentScans([...res.accepted, ...res.duplicates])
+    }
+    const regs = await getContingentRegQueue()
+    if (regs.length) {
+      await apiContingentReg(settings.apiUrl, settings.scannerKey, regs)
+      await removeContingentRegs(regs.map((r) => r.reg_id))
+    }
   } finally {
     flushing = false
   }
 }
 
 export async function queueDepth(): Promise<number> {
-  const [scans, walkups] = await Promise.all([getOutbox(), getWalkupQueue()])
-  return scans.length + walkups.length
+  const [scans, walkups, ctgScans, regs] = await Promise.all([
+    getOutbox(),
+    getWalkupQueue(),
+    getContingentOutbox(),
+    getContingentRegQueue(),
+  ])
+  return scans.length + walkups.length + ctgScans.length + regs.length
 }
 
 /**

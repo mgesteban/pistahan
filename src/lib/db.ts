@@ -1,8 +1,9 @@
 import { get, set } from 'idb-keyval'
-import type { Scan, Volunteer, Walkup } from './types'
+import type { Contingent, ContingentReg, ContingentScan, Scan, Volunteer, Walkup } from './types'
 
 // All device state lives in IndexedDB so it survives reloads and works with
-// the network fully off. Keys: roster, outbox, walkups, checkins.
+// the network fully off. Keys: roster, outbox, walkups, checkins, plus the
+// contingent equivalents: contingents, ctg-outbox, ctg-regs, ctg-arrivals.
 
 export async function saveRoster(v: Volunteer[]) {
   await set('roster', v)
@@ -54,6 +55,59 @@ export async function markCheckedIn(token: string, iso: string) {
   if (!m[token]) {
     m[token] = iso
     await set('checkins', m)
+  }
+}
+
+export async function saveContingents(c: Contingent[]) {
+  await set('contingents', c)
+}
+
+export async function getContingents(): Promise<Contingent[]> {
+  return ((await get('contingents')) as Contingent[] | undefined) ?? []
+}
+
+export async function getContingentOutbox(): Promise<ContingentScan[]> {
+  return ((await get('ctg-outbox')) as ContingentScan[] | undefined) ?? []
+}
+
+export async function queueContingentScan(s: ContingentScan) {
+  const q = await getContingentOutbox()
+  q.push(s)
+  await set('ctg-outbox', q)
+}
+
+export async function removeContingentScans(ids: string[]) {
+  const drop = new Set(ids)
+  const q = (await getContingentOutbox()).filter((s) => !drop.has(s.checkin_id))
+  await set('ctg-outbox', q)
+}
+
+export async function getContingentRegQueue(): Promise<ContingentReg[]> {
+  return ((await get('ctg-regs')) as ContingentReg[] | undefined) ?? []
+}
+
+export async function queueContingentReg(r: ContingentReg) {
+  const q = await getContingentRegQueue()
+  q.push(r)
+  await set('ctg-regs', q)
+}
+
+export async function removeContingentRegs(ids: string[]) {
+  const drop = new Set(ids)
+  const q = (await getContingentRegQueue()).filter((r) => !drop.has(r.reg_id))
+  await set('ctg-regs', q)
+}
+
+/** Local arrival history: cluster code -> first arrival time ISO (this device). */
+export async function getContingentArrivals(): Promise<Record<string, string>> {
+  return ((await get('ctg-arrivals')) as Record<string, string> | undefined) ?? {}
+}
+
+export async function markContingentArrived(code: string, iso: string) {
+  const m = await getContingentArrivals()
+  if (!m[code]) {
+    m[code] = iso
+    await set('ctg-arrivals', m)
   }
 }
 

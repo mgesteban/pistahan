@@ -12,6 +12,8 @@ import {
 import { clearSettings, loadSettings } from '../lib/settings'
 import { flushNow, startSyncLoop, type SyncState } from '../lib/sync'
 import type { Settings, Volunteer } from '../lib/types'
+import ContingentStation from './ContingentStation'
+import MCStation from './MCStation'
 import ScanView from './ScanView'
 import SearchView from './SearchView'
 import Setup from './Setup'
@@ -42,13 +44,16 @@ export default function Scanner() {
   const settingsRef = useRef(settings)
   settingsRef.current = settings
 
+  const contingentStation = settings?.station === 'Contingent' || settings?.station === 'MC'
+
   useEffect(() => {
-    if (!settings) return
+    // Contingent/MC stations manage their own data + sync loop.
+    if (!settings || contingentStation) return
     requestPersistentStorage()
     void getRoster().then(setRoster)
     void getCheckins().then(setCheckins)
     return startSyncLoop(settings, setSync)
-  }, [settings])
+  }, [settings, contingentStation])
 
   const byToken = useMemo(() => {
     const m = new Map<string, Volunteer>()
@@ -96,6 +101,20 @@ export default function Scanner() {
     return <Setup onDone={setSettings} />
   }
 
+  const reset = () => {
+    if (confirm('Reset this device? Saved data and queued check-ins stay on the device.')) {
+      clearSettings()
+      setSettings(null)
+    }
+  }
+
+  if (settings.station === 'MC') {
+    return <MCStation settings={settings} onReset={reset} />
+  }
+  if (settings.station === 'Contingent') {
+    return <ContingentStation settings={settings} onReset={reset} />
+  }
+
   const checkedCount = Object.keys(checkins).length
 
   return (
@@ -106,12 +125,7 @@ export default function Scanner() {
         rosterCount={roster.length}
         sync={sync}
         onSyncNow={() => void flushNow(settings)}
-        onReset={() => {
-          if (confirm('Reset this device? Roster and queued check-ins stay saved.')) {
-            clearSettings()
-            setSettings(null)
-          }
-        }}
+        onReset={reset}
       />
 
       <nav className="tabs">
