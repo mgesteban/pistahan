@@ -1,13 +1,15 @@
 # Pistahan 33 — Station Coordinator Guide
 
-*For the Parade, Festival & Pistahan scanning leads + help desk. The app: **pistahan.vercel.app***
+*For the Parade, Festival & Pistahan scanning leads + help desk + parade ops. The app: **pistahan.app***
 
 ## Set up your phone (do this the night before)
 
 1. Open the **setup link** Grace sends you (it pre-fills the backend
    connection). Use Chrome (Android) or Safari (iPhone).
-2. Pick your **station** (Parade / Festival / Pistahan, or Help desk), enter **your name**.
-3. Tap **Download roster** — wait for "✓ … volunteers loaded".
+2. Pick your **station** (Parade / Festival / Pistahan / Help desk — or
+   **Contingent** / **MC** for parade operations), enter **your name**.
+3. Tap **Download roster** — wait for "✓ … volunteers loaded". (Contingent and
+   MC stations download the **contingent list** instead.)
 4. Tap **Start**.
 5. **Add the app to your home screen** (Share → *Add to Home Screen*). This
    keeps it working offline reliably.
@@ -42,6 +44,31 @@ help desk.** One 3-minute conversation puts your lane 10 people behind.
 
 - **Walk-up** tab: add people who aren't on the roster (name, phone, shirt,
   post). They sync to the Walkups list automatically.
+
+## Contingent station (parade ops coordinators only)
+
+For the coordinator crew tracking parade contingents at staging.
+
+- **Contingents tab:** search by **cluster code** (like `A5`), name, or
+  contingent number. The list is in parade order.
+- Tap a contingent to open its full details: **primary contact (tap the phone
+  number to call)**, participants, vehicles, staging instructions, and notes.
+- When a contingent checks into staging, tap **Mark arrived** — it logs the
+  time and syncs to the Google Sheet (works offline, just like scans).
+- **Register tab:** a contingent that isn't on the list? Add it here (name,
+  contact, cluster, vehicles). It syncs for the parade team to place.
+
+## MC station (announcer's iPad or iPhone)
+
+Read-only and built for the main stage — big type, works fully offline.
+
+- As a contingent approaches, type its **cluster code** (like `A5`) — the card
+  shows the contingent's name, number, **bio, and fun facts** to read out.
+- **Prev / Next** walk the parade order, and "Up next" shows who's coming, so
+  you never lose your place. Tapping any row in the list jumps to it.
+- Set it up the night before like any station (pick **MC**, download the
+  contingent list). If the parade order changes morning-of, tap ⚙ → reset →
+  re-download while you still have good internet.
 
 ## The status bar (top of screen)
 

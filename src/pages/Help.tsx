@@ -27,6 +27,7 @@ export default function Help() {
         <a href="#volunteers">For volunteers</a>
         <a href="#maps">Maps</a>
         <a href="#coordinators">For coordinators</a>
+        <a href="#parade-ops">Parade ops</a>
       </nav>
 
       <section className="help-chapter" id="volunteers">
@@ -36,7 +37,7 @@ export default function Help() {
         <h2>Before event day — do this today</h2>
         <ol className="help-steps">
           <li>
-            On your phone, open <a href="/pass">pistahan.vercel.app/pass</a>.
+            On your phone, open <a href="/pass">pistahan.app/pass</a>.
           </li>
           <li>
             Enter your <b>name</b> (first, last, or full), your <b>email</b>,
@@ -136,8 +137,8 @@ export default function Help() {
             connection). Chrome on Android, Safari on iPhone.
           </li>
           <li>
-            Pick your <b>station</b> (Parade / Festival / Pistahan / Help desk) and enter your
-            name.
+            Pick your <b>station</b> (Parade / Festival / Pistahan / Help desk —
+            or Contingent / MC for parade operations) and enter your name.
           </li>
           <li>
             Tap <b>Download roster</b>, wait for “✓ … volunteers loaded”, then{' '}
@@ -271,6 +272,62 @@ export default function Help() {
             check-ins.
           </li>
         </ul>
+      </section>
+
+      <section className="help-chapter" id="parade-ops">
+        <span className="chapter-tag tag-coordinator">Parade operations</span>
+        <h1>Contingents at staging, and the MC at the main stage</h1>
+        <p className="help-sub">
+          Two more stations on the setup screen: <b>Contingent</b> for the
+          parade ops crew, <b>MC</b> for the announcer. Both download the
+          contingent list instead of the volunteer roster, and both work
+          offline.
+        </p>
+
+        <h2>Contingent station — tracking arrivals at staging</h2>
+        <ul className="help-list">
+          <li>
+            <b>Contingents tab:</b> search by <b>cluster code</b> (like{' '}
+            <code>A5</code>), name, or contingent number — the list is in
+            parade order.
+          </li>
+          <li>
+            Tap a contingent for full details: <b>primary contact</b> (tap the
+            number to call), participants, vehicles, staging instructions, and
+            notes.
+          </li>
+          <li>
+            When they check into staging, tap <b>Mark arrived</b> — it logs
+            the time and syncs to the Google Sheet, offline or not.
+          </li>
+          <li>
+            <b>Register tab:</b> contingent not on the list? Add it — name,
+            contact, cluster, vehicles — and the parade team places it later.
+          </li>
+        </ul>
+
+        <h2>MC station — never lose the parade order</h2>
+        <ul className="help-list">
+          <li>
+            As a contingent approaches the stage, type its <b>cluster code</b>{' '}
+            — the card shows the name, number, <b>bio, and fun facts</b> to
+            read out, in big type.
+          </li>
+          <li>
+            <b>Prev / Next</b> walk the parade order and “Up next” shows who’s
+            coming. Tap any row in the list to jump to it.
+          </li>
+          <li>
+            Set up the night before (pick <b>MC</b>, download the contingent
+            list). If the order changes morning-of, ⚙ → reset → re-download
+            while you still have good internet.
+          </li>
+        </ul>
+
+        <div className="help-callout">
+          Cluster monitors: the paper roster stays your primary tool — the app
+          is the coordinators’ and MC’s backup brain, not yours.
+        </div>
       </section>
 
       <footer className="help-footer">
