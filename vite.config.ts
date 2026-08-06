@@ -24,6 +24,10 @@ export default defineConfig({
       workbox: {
         // App shell must boot with zero connectivity on event day
         navigateFallback: '/index.html',
+        // Direct file links (maps, PDFs) must load the real file, not the app shell
+        navigateFallbackDenylist: [/\.(?:png|jpe?g|svg|webp|pdf)$/i],
+        // contacts-*.png is volunteer-only: keep its URL out of the public precache manifest
+        globIgnores: ['**/contacts-*.png'],
         globPatterns: ['**/*.{js,css,html,png,svg,woff2}']
       }
     })
