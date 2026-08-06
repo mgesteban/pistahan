@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import PassCard from '../components/PassCard'
-import { apiLookup } from '../lib/api'
+import { apiLookup, BackendBusyError } from '../lib/api'
 import type { Volunteer } from '../lib/types'
 
 const CACHE_KEY = 'p33-pass'
@@ -35,9 +35,11 @@ export default function Pass() {
       }
     } catch (err) {
       setMessage(
-        navigator.onLine
-          ? `Lookup failed: ${String(err)}`
-          : 'You appear to be offline — try again with a connection.'
+        !navigator.onLine
+          ? 'You appear to be offline — try again with a connection.'
+          : err instanceof BackendBusyError
+            ? 'The pass server is catching its breath — wait a few seconds and tap again.'
+            : `Lookup failed: ${String(err)}`
       )
     } finally {
       setBusy(false)

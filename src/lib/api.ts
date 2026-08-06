@@ -82,14 +82,40 @@ export function apiContingentReg(apiUrl: string, key: string, regs: ContingentRe
   return post<{ accepted: number }>(apiUrl, { key, action: 'contingent_register', regs })
 }
 
+// Apps Script sporadically answers with a Google HTML error page instead of
+// running the script; those hiccups clear within seconds.
+export class BackendBusyError extends Error {
+  constructor() {
+    super('backend busy')
+  }
+}
+
 export async function apiLookup(
   apiUrl: string,
   key: string,
   params: { q?: string; email?: string; last_name?: string; phone4?: string }
 ): Promise<LookupResult> {
   const q = new URLSearchParams({ key, action: 'lookup', ...params })
-  const res = await fetch(`${apiUrl}?${q.toString()}`)
-  const json = (await res.json()) as LookupResult
-  if (json.error) throw new Error(json.error)
-  return json
+  let lastErr: unknown = new BackendBusyError()
+  for (let attempt = 0; attempt < 3; attempt++) {
+    if (attempt > 0) await new Promise((r) => setTimeout(r, 1500 * attempt))
+    try {
+      const res = await fetch(`${apiUrl}?${q.toString()}`)
+      const text = await res.text()
+      let json: LookupResult
+      try {
+        json = JSON.parse(text) as LookupResult
+      } catch {
+        throw new BackendBusyError()
+      }
+      if (json.error) throw new Error(json.error)
+      return json
+    } catch (err) {
+      lastErr = err
+      // retry only transient failures: HTML error page or network blip
+      if (err instanceof BackendBusyError || err instanceof TypeError) continue
+      throw err
+    }
+  }
+  throw lastErr
 }
