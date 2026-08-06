@@ -3,6 +3,7 @@
 *.xls
 *.csv
 *.pdf
+!public/volunteer-orientation.pdf
 out/
 backup-*/
 
