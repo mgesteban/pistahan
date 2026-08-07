@@ -3,9 +3,13 @@
 *.xls
 *.csv
 *.pdf
+*.docx
 !public/volunteer-orientation.pdf
 out/
 backup-*/
+# contingent source docs + printed cluster directory (contact PII)
+repistahanparadecontingentcheckinsoftware/
+/260806 Cluster Directory*.png
 
 # secrets
 .env
