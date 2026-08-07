@@ -12,7 +12,7 @@ export default defineConfig({
         name: 'Pistahan 33 Check-In',
         short_name: 'Pistahan 33',
         description: 'Volunteer check-in scanner for the 33rd Annual Pistahan Parade & Festival',
-        start_url: '/',
+        start_url: '/station',
         display: 'standalone',
         background_color: '#101828',
         theme_color: '#101828',
