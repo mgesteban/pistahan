@@ -1,6 +1,6 @@
 # Pistahan 33 — Station Coordinator Guide
 
-*For the Parade, Festival & Pistahan scanning leads + help desk + parade ops. The app: **pistahan.app***
+*For the Parade, Festival & Pistahan scanning leads + help desk + parade ops. The app: **pistahan.app/station** (the bare pistahan.app now shows the volunteer guide; your setup link and home-screen icon keep working as before)*
 
 ## Set up your phone (do this the night before)
 
