@@ -40,7 +40,9 @@ def main(csv_path):
     # a time value and the API serializes it as "1899-12-30T07:00:00.000Z".
     for r in rows:
         for col in ('shift_start', 'shift_end'):
-            if re.fullmatch(r'\d{1,2}:\d{2}', r.get(col, '')):
+            # "07:00", "7AM", "1 PM", "1:00 PM" — Sheets coerces them all
+            if re.fullmatch(r'\d{1,2}(:\d{2})?\s*(AM|PM)?', r.get(col, ''),
+                            re.IGNORECASE):
                 r[col] = "'" + r[col]
 
     body = json.dumps({'action': 'import_roster', 'key': key, 'rows': rows})

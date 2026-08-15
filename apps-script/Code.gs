@@ -425,29 +425,43 @@ function generateTokens() {
 function sendPassEmails() {
   var DAILY_BUDGET = 95; // headroom under the 100/day consumer cap
   var PASS_URL = 'https://pistahan.app/pass'; // custom domain; must be live in Vercel before emailing
+  var NOTIFY = 'gracesteban@gmail.com'; // gets a test copy + run summary each run
+  var passBody =
+    '<p>Salamat for volunteering at Pistahan 33!</p>' +
+    '<p><b>Open this link now and screenshot your pass:</b><br>' +
+    '<a href="' + PASS_URL + '">' + PASS_URL + '</a></p>' +
+    '<p>Enter the email address this message was sent to. Your pass has ' +
+    'your QR code, assignment, and where to go. Screenshot it so it works ' +
+    'even with bad cell service on event day.</p>' +
+    '<p>Questions? Reply to this email or find the help desk on site.</p>';
   var sheet = tab_('Roster');
   var rows = readTab_('Roster', ROSTER_COLS);
   var sentCol = ROSTER_COLS.indexOf('pass_sent_email') + 1;
-  var sent = 0;
+  var sent = 0, recipients = [];
   for (var i = 0; i < rows.length && sent < DAILY_BUDGET; i++) {
     var r = rows[i];
     if (!r.email || r.pass_sent_email) continue;
     MailApp.sendEmail({
       to: String(r.email).trim(),
       subject: 'Pistahan 33 — your volunteer check-in pass',
-      htmlBody:
-        '<p>Salamat for volunteering at Pistahan 33!</p>' +
-        '<p><b>Open this link now and screenshot your pass:</b><br>' +
-        '<a href="' + PASS_URL + '">' + PASS_URL + '</a></p>' +
-        '<p>Enter the email address this message was sent to. Your pass has ' +
-        'your QR code, assignment, and where to go. Screenshot it so it works ' +
-        'even with bad cell service on event day.</p>' +
-        '<p>Questions? Reply to this email or find the help desk on site.</p>'
+      htmlBody: passBody
     });
     sheet.getRange(i + 2, sentCol).setValue(localStamp_(new Date()));
+    recipients.push(r.first_name + ' ' + r.last_name + ' <' + String(r.email).trim() + '>');
     sent++;
   }
-  Logger.log('Sent ' + sent + ' pass emails');
+  MailApp.sendEmail({
+    to: NOTIFY,
+    subject: '[TEST] Pistahan pass run — ' + sent + ' sent · ' + localStamp_(new Date()),
+    htmlBody:
+      '<p><b>sendPassEmails just ran.</b> ' + sent + ' pass email(s) went out. ' +
+      'Below the line is exactly what volunteers received.</p>' +
+      (recipients.length
+        ? '<p><b>Sent to:</b><br>' + recipients.join('<br>') + '</p>'
+        : '<p>No one needed a pass — everyone with an email is already stamped.</p>') +
+      '<hr>' + passBody
+  });
+  Logger.log('Sent ' + sent + ' pass emails; summary to ' + NOTIFY);
 }
 
 // -------------------------------------------------------------------- helpers
@@ -478,9 +492,25 @@ function readTab_(name, cols) {
   if (n < 1) return [];
   return sheet.getRange(2, 1, n, cols.length).getValues().map(function (row) {
     var obj = {};
-    cols.forEach(function (c, i) { obj[c] = row[i]; });
+    cols.forEach(function (c, i) { obj[c] = cellText_(row[i]); });
     return obj;
   });
+}
+
+// A time typed straight into a cell ("8:00") becomes a Date on the epoch date
+// 1899-12-30, which JSON-serializes as ISO gibberish on passes. Render it back
+// to "8AM" / "1:30PM"; real datetimes (e.g. pass_sent stamps) keep localStamp_.
+function cellText_(v) {
+  if (!(v instanceof Date)) return v;
+  // getValues() returns cell times in the script's timezone; the spreadsheet
+  // timezone getter can return non-string in web-app calls and then
+  // formatDate throws for every lookup.
+  var tz = Session.getScriptTimeZone();
+  if (typeof tz !== 'string' || !tz) tz = 'GMT';
+  if (v.getFullYear() < 1970) {
+    return Utilities.formatDate(v, tz, 'h:mma').replace(':00', '');
+  }
+  return localStamp_(v);
 }
 
 function existingScanIds_(sheet) {
