@@ -1,6 +1,6 @@
 # Appreciation Night RSVP — wiring the Google Form backend
 
-The RSVP page at **pistahan.app/appreciation** (also /rsvp) is live in the
+The RSVP page at **pistahan.app/volunteer-appreciation** (aliases: /appreciation, /rsvp) is live in the
 frontend but shows "RSVPs aren't open quite yet" until a Google Form is
 wired in. Responses land in a Google Sheet you own — no Apps Script, no
 redeploys beyond a git push.
@@ -48,7 +48,7 @@ spreadsheet.
 
 Paste the form ID and the seven `entry.*` IDs into the constants at the top
 of `src/pages/Rsvp.tsx` (`FORM_ID` and `ENTRY`), commit, push to `main`.
-Vercel deploys it; the form goes live at **pistahan.app/appreciation**.
+Vercel deploys it; the form goes live at **pistahan.app/volunteer-appreciation**.
 (Or just send the pre-filled link + form URL to Claude and ask it to wire
 them in.)
 

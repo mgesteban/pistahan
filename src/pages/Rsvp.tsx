@@ -136,6 +136,9 @@ export default function Rsvp() {
             Change my RSVP
           </button>
         </section>
+        <a className="btn-link" href="/help#volunteers">
+          Volunteer help guide →
+        </a>
         <footer className="credit">
           Developed with ❤️ by{' '}
           <a href="https://www.mgesteban.com" target="_blank" rel="noreferrer">
@@ -272,6 +275,9 @@ export default function Rsvp() {
           </>
         )}
       </section>
+      <a className="btn-link" href="/help#volunteers">
+        Volunteer help guide →
+      </a>
       <footer className="credit">
         Developed with ❤️ by{' '}
         <a href="https://www.mgesteban.com" target="_blank" rel="noreferrer">
