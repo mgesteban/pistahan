@@ -198,6 +198,29 @@ body {
 .card h1 { font-size: 1.35rem; }
 .card p { color: var(--muted); line-height: 1.5; }
 
+/* ---------- appreciation-night RSVP ---------- */
+.rsvp-label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+.rsvp-optional { color: var(--muted); font-weight: 400; }
+.rsvp-when { color: var(--accent); font-size: 1.05rem; }
+.rsvp-venue { color: var(--text); }
+.rsvp-choices { display: flex; gap: 8px; flex-wrap: wrap; }
+.rsvp-choice { flex: 1; min-height: 44px; }
+.rsvp-choice-on {
+  background: var(--accent);
+  color: #17253b;
+}
+.rsvp-note {
+  min-height: 84px;
+  resize: vertical;
+  font-family: inherit;
+}
+
 /* ---------- setup ---------- */
 .setup { gap: 18px; }
 .setup-title { font-size: 1.5rem; color: var(--accent); padding-top: 8px; }
