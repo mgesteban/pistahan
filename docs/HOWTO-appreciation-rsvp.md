@@ -1,8 +1,9 @@
 # Appreciation Night RSVP — wiring the Google Form backend
 
-The RSVP page at **pistahan.app/volunteer-appreciation** (aliases: /appreciation, /rsvp) is live in the
-frontend but shows "RSVPs aren't open quite yet" until a Google Form is
-wired in. Responses land in a Google Sheet you own — no Apps Script, no
+The RSVP page at **pistahan.app/volunteer-appreciation** (aliases: /appreciation, /rsvp) is LIVE and wired to the "Volunteer Appreciation" Google Form
+(created 2026-08-15, form ID + entry IDs are in src/pages/Rsvp.tsx). This
+doc records how the wiring works in case the form must be recreated.
+Responses land in a Google Sheet you own — no Apps Script, no
 redeploys beyond a git push.
 
 ## 1. Create the form (~3 minutes)
@@ -18,8 +19,8 @@ where you want the responses**, create a blank form titled
 | 1 | Full name | Short answer | — |
 | 2 | Email | Short answer | — |
 | 3 | Phone | Short answer | — |
-| 4 | Will you join us? | Multiple choice | `Yes, I'll be there!` / `Sorry, I can't make it` |
-| 5 | Bringing anyone? | Multiple choice | `Just me` / `+1` / `+2` |
+| 4 | Will you join us? | Multiple choice | `Yes, I will be there` / `Sorry I can't make it` |
+| 5 | Bringing someone? | Multiple choice | `Just me` / `+ 1` / `+ 2` |
 | 6 | Dietary restrictions or allergies | Short answer | — |
 | 7 | A note, memory, or shout-out | Paragraph | — |
 

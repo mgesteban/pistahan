@@ -4,22 +4,22 @@ import { useState } from 'react'
 // Apps Script involved. Create the form per docs/HOWTO-appreciation-rsvp.md,
 // then paste the form ID and entry.* field IDs below. Until FORM_ID is set,
 // the page shows a "not open yet" notice instead of the form.
-const FORM_ID = ''
+const FORM_ID = '1FAIpQLSdeRLecTSZDIuwK1XO0q3Y-KsoAEgPipsoLK3Fm6CGPYDwzSQ'
 const ENTRY = {
-  name: '', // e.g. 'entry.123456789'
-  email: '',
-  phone: '',
-  attending: '',
-  guests: '',
-  dietary: '',
-  note: '',
+  name: 'entry.682859722',
+  email: 'entry.2036735409',
+  phone: 'entry.369409833',
+  attending: 'entry.50994507',
+  guests: 'entry.819711600',
+  dietary: 'entry.956089733',
+  note: 'entry.732077199',
 }
 
 // Answer strings must match the Google Form's choices character-for-character
 // or the response is dropped from that question.
-const ATTEND_YES = "Yes, I'll be there!"
-const ATTEND_NO = "Sorry, I can't make it"
-const GUEST_CHOICES = ['Just me', '+1', '+2']
+const ATTEND_YES = 'Yes, I will be there'
+const ATTEND_NO = "Sorry I can't make it"
+const GUEST_CHOICES = ['Just me', '+ 1', '+ 2']
 
 const EVENT = {
   date: 'Thursday, September 10',
