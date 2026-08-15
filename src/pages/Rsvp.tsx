@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 // Backend is a plain Google Form: responses land in a Sheet Grace owns, no
 // Apps Script involved. Create the form per docs/HOWTO-appreciation-rsvp.md,
@@ -41,6 +41,11 @@ const CALENDAR_URL =
 const CACHE_KEY = 'p33-rsvp'
 
 export default function Rsvp() {
+  // The offline app shell (index.html via the SW fallback) carries the
+  // check-in title; fix it up for anyone landing on the RSVP that way.
+  useEffect(() => {
+    document.title = 'Volunteer Appreciation Night — Pistahan 33'
+  }, [])
   const [done, setDone] = useState<string | null>(() =>
     localStorage.getItem(CACHE_KEY)
   )

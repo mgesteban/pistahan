@@ -1,3 +1,8 @@
 {
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+  "rewrites": [
+    { "source": "/volunteer-appreciation", "destination": "/appreciation.html" },
+    { "source": "/appreciation", "destination": "/appreciation.html" },
+    { "source": "/rsvp", "destination": "/appreciation.html" },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
 }

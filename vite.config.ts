@@ -3,6 +3,13 @@ import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig({
+  build: {
+    rollupOptions: {
+      // Second HTML shell so the RSVP link previews its own title/OG tags
+      // (vercel.json rewrites the RSVP routes to appreciation.html)
+      input: { main: 'index.html', appreciation: 'appreciation.html' }
+    }
+  },
   plugins: [
     react(),
     VitePWA({
