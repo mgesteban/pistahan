@@ -12,6 +12,7 @@ const ENTRY = {
   attending: 'entry.50994507',
   dietary: 'entry.956089733',
   note: 'entry.732077199',
+  favorite: 'entry.724359982',
 }
 
 // Answer strings must match the Google Form's choices character-for-character
@@ -53,6 +54,7 @@ export default function Rsvp() {
   const [attending, setAttending] = useState(ATTEND_YES)
   const [dietary, setDietary] = useState('')
   const [note, setNote] = useState('')
+  const [favorite, setFavorite] = useState('')
   const [busy, setBusy] = useState(false)
   const [message, setMessage] = useState('')
 
@@ -68,6 +70,7 @@ export default function Rsvp() {
     body.set(ENTRY.attending, attending)
     if (coming && dietary.trim()) body.set(ENTRY.dietary, dietary.trim())
     if (note.trim()) body.set(ENTRY.note, note.trim())
+    if (favorite.trim()) body.set(ENTRY.favorite, favorite.trim())
     try {
       // no-cors: Google Forms accepts the POST but the response is opaque,
       // so only network-level failures are catchable.
@@ -246,9 +249,20 @@ export default function Rsvp() {
               <span className="rsvp-optional">(optional)</span>
               <textarea
                 className="input rsvp-note"
-                placeholder="Favorite festival moment? A volunteer who deserves a shout-out?"
+                placeholder="A volunteer who deserves a shout-out?"
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
+              />
+            </label>
+
+            <label className="rsvp-label">
+              Favorite Pistahan moments{' '}
+              <span className="rsvp-optional">(optional)</span>
+              <textarea
+                className="input rsvp-note"
+                placeholder="A performance, a meal, a moment on the crew that stuck with you — tell us about it."
+                value={favorite}
+                onChange={(e) => setFavorite(e.target.value)}
               />
             </label>
 

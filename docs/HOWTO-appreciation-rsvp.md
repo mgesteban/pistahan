@@ -23,6 +23,7 @@ where you want the responses**, create a blank form titled
 | 5 | Bringing someone? | Multiple choice | `Just me` / `+ 1` / `+ 2` |
 | 6 | Dietary restrictions or allergies | Short answer | — |
 | 7 | A note, memory, or shout-out | Paragraph | — |
+| 8 | Favorite Pistahan moments | Paragraph | — |
 
 Leave every question **not required** — the page does its own validation,
 and a "required" mismatch would make Google reject the whole submission.
@@ -47,7 +48,7 @@ spreadsheet.
 
 ## 3. Wire them in
 
-Paste the form ID and the seven `entry.*` IDs into the constants at the top
+Paste the form ID and the eight `entry.*` IDs into the constants at the top
 of `src/pages/Rsvp.tsx` (`FORM_ID` and `ENTRY`), commit, push to `main`.
 Vercel deploys it; the form goes live at **pistahan.app/volunteer-appreciation**.
 (Or just send the pre-filled link + form URL to Claude and ask it to wire
