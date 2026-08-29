@@ -10,7 +10,6 @@ const ENTRY = {
   email: 'entry.2036735409',
   phone: 'entry.369409833',
   attending: 'entry.50994507',
-  guests: 'entry.819711600',
   dietary: 'entry.956089733',
   note: 'entry.732077199',
 }
@@ -19,7 +18,6 @@ const ENTRY = {
 // or the response is dropped from that question.
 const ATTEND_YES = 'Yes, I will be there'
 const ATTEND_NO = "Sorry I can't make it"
-const GUEST_CHOICES = ['Just me', '+ 1', '+ 2']
 
 const EVENT = {
   date: 'Thursday, September 10',
@@ -53,7 +51,6 @@ export default function Rsvp() {
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
   const [attending, setAttending] = useState(ATTEND_YES)
-  const [guests, setGuests] = useState(GUEST_CHOICES[0])
   const [dietary, setDietary] = useState('')
   const [note, setNote] = useState('')
   const [busy, setBusy] = useState(false)
@@ -69,10 +66,7 @@ export default function Rsvp() {
     body.set(ENTRY.email, email.trim())
     if (phone.trim()) body.set(ENTRY.phone, phone.trim())
     body.set(ENTRY.attending, attending)
-    if (coming) {
-      body.set(ENTRY.guests, guests)
-      if (dietary.trim()) body.set(ENTRY.dietary, dietary.trim())
-    }
+    if (coming && dietary.trim()) body.set(ENTRY.dietary, dietary.trim())
     if (note.trim()) body.set(ENTRY.note, note.trim())
     try {
       // no-cors: Google Forms accepts the POST but the response is opaque,
@@ -165,9 +159,9 @@ export default function Rsvp() {
       <section className="card">
         <h1>Volunteer Appreciation Night 🏆</h1>
         <p>
-          You made Pistahan 33 happen — now let us feed you. Join us for an
-          evening of thanks, good food, and special awards honoring our
-          exceptional volunteers.
+          You make Pistahan 33 happen — now let us celebrate and feed you.
+          Join us for an evening of thanks, good food, and special awards
+          honoring our exceptional volunteers.
         </p>
         <p>
           <strong className="rsvp-when">
@@ -181,6 +175,9 @@ export default function Rsvp() {
           </a>
         </p>
         <p>Please RSVP by {EVENT.rsvpBy} so we can give the restaurant a headcount.</p>
+        <p className="rsvp-limit">
+          Limited space available. Invitation is not transferable.
+        </p>
       </section>
 
       <section className="card">
@@ -232,30 +229,16 @@ export default function Rsvp() {
             </div>
 
             {coming && (
-              <>
-                <div className="rsvp-label">Bringing anyone?</div>
-                <div className="rsvp-choices">
-                  {GUEST_CHOICES.map((opt) => (
-                    <button
-                      key={opt}
-                      className={`btn rsvp-choice ${guests === opt ? 'rsvp-choice-on' : ''}`}
-                      onClick={() => setGuests(opt)}
-                    >
-                      {opt}
-                    </button>
-                  ))}
-                </div>
-                <label className="rsvp-label">
-                  Dietary restrictions or allergies{' '}
-                  <span className="rsvp-optional">(optional)</span>
-                  <input
-                    className="input"
-                    placeholder="Vegetarian, shellfish allergy…"
-                    value={dietary}
-                    onChange={(e) => setDietary(e.target.value)}
-                  />
-                </label>
-              </>
+              <label className="rsvp-label">
+                Dietary restrictions or allergies{' '}
+                <span className="rsvp-optional">(optional)</span>
+                <input
+                  className="input"
+                  placeholder="Vegetarian, shellfish allergy…"
+                  value={dietary}
+                  onChange={(e) => setDietary(e.target.value)}
+                />
+              </label>
             )}
 
             <label className="rsvp-label">

@@ -209,6 +209,7 @@ body {
 .rsvp-optional { color: var(--muted); font-weight: 400; }
 .rsvp-when { color: var(--accent); font-size: 1.05rem; }
 .rsvp-venue { color: var(--text); }
+.card p.rsvp-limit { color: var(--text); font-weight: 600; }
 .rsvp-choices { display: flex; gap: 8px; flex-wrap: wrap; }
 .rsvp-choice { flex: 1; min-height: 44px; }
 .rsvp-choice-on {
